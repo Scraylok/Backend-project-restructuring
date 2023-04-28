@@ -28,6 +28,14 @@ export const createOneProduct = async (prod) => {
         throw new Error(error)
     }
 }
+export const paginateProducts = async (filters, options) => {
+    try {
+        const paginated = await productModel.paginate(filters, options);
+        return paginated 
+    } catch (error) {
+        throw error
+    }
+}
 
 export const updateOneProduct = async (id, info) => {
     try {

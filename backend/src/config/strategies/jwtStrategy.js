@@ -3,7 +3,7 @@ import { createUser, findUserById } from '../../services/userService.js'
 
 const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET
+    secretOrKey: process.env.SIGNED_COOKIE
 }
 
 export const strategyJWT = new JwtStrategy(jwtOptions, async (payload, done) => {
