@@ -1,55 +1,91 @@
-import 'dotenv/config'
-import express from 'express'
-import session from 'express-session'
-import cookieParser from 'cookie-parser'
-import multer from 'multer'
-import MongoStore from 'connect-mongo'
-import passport from 'passport'
-import { engine } from 'express-handlebars'
-import { __dirname } from './path.js'
-import * as path from 'path'
-import router from './routes/index.routes.js'
+import "dotenv/config.js";
+import express from "express";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+import mongoose from "mongoose";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 import initializePassport from './config/passport.js'
+import routerUser from "./routes/users.routes.js";
+import routerProduct from "./routes/products.routes.js";
+import routerCart from "./routes/cart.routes.js";
+import routerSession from "./routes/session.routes.js";
+import routerGithub from "./routes/github.routes.js";
+import nodemailer from "nodemailer"
 
-const app = express()
 
-app.use(cookieParser(process.env.SIGNED_COOKIE))
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(session({
+
+//Express execution
+const app = express();
+
+
+//Middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(
+  session({
+    
     store: MongoStore.create({
-        mongoUrl: process.env.MONGODBURL,
-        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-        ttl: 210
+      mongoUrl: process.env.URLMONGODB,
+      mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+      ttl: 360,
     }),
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true
-}))
+    resave: true, 
+    saveUninitialized: true,
+  })
+);
+
+//MongoAtlas Connection
+const mongooseConnection = async () => {
+  await mongoose
+    .connect(process.env.URLMONGODB, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .catch((error) => console.log(error));
+};
+mongooseConnection();
 
 //Passport
-initializePassport()
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+initializePassport();
+app.use(passport.session());
 
-app.engine("handlebars", engine())
-app.set("view engine", "handlebars")
-app.set("views", path.resolve(__dirname, "./views"))
+//Port Setting
+app.set("port", process.env.PORT || 8080);
 
-app.set("port", process.env.PORT || 5000)
+//Server run:
+export const server = app.listen(app.get("port"), () => {
+  console.log(`Server running on Port: ${app.get("port")}`);
+});
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'src/public/img')
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}${file.originalname}`)
-    }
-})
-
-const upload = multer({ storage: storage })
 
 //Routes
-app.use("/", router)
+app.use('/user', routerUser)
+app.use('/product', routerProduct)
+app.use('/cart', routerCart)
+app.use('/session', routerSession)
+app.use('/github', routerGithub)
 
-const server = app.listen(app.get("port"), () => console.log(`Server on port ${app.get("port")}`))
+//Socket.io
+
+export const io = new Server(server);
+
+io.on("connection", (socket) => {
+  console.log("Client connect");
+
+  socket.on("message", async newMessage => {
+    await createMessage([newMessage])
+    const messages = await readMessages();
+    console.log(messages)
+    socket.emit("allMessages", messages)
+  })
+  socket.on("load messages", async () => {
+    const messages = await readMessages();
+    console.log(messages)
+    socket.emit("allMessages", messages)
+  })
+
+})
