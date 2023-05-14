@@ -1,5 +1,6 @@
 import productModel from "../models/MongoDB/productModel.js";
 
+//Busca los productos
 export const findProducts = async () => {
     try {
         const products = await productModel.find()
@@ -9,7 +10,7 @@ export const findProducts = async () => {
     }
 }
 
-
+//Busca los productos segun el ID
 export const findProductById = async (id) => {
     try {
         const product = await productModel.findById(id)
@@ -18,7 +19,7 @@ export const findProductById = async (id) => {
         throw new Error(error)
     }
 }
-
+//Crea un producto
 export const createOneProduct = async (prod) => {
     try {
         const newProduct = await productModel.insertMany(prod)
@@ -28,6 +29,7 @@ export const createOneProduct = async (prod) => {
         throw new Error(error)
     }
 }
+//Paginacion
 export const paginateProducts = async (filters, options) => {
     try {
         const paginated = await productModel.paginate(filters, options);
@@ -36,7 +38,7 @@ export const paginateProducts = async (filters, options) => {
         throw error
     }
 }
-
+//Actualiza un solo producto
 export const updateOneProduct = async (id, info) => {
     try {
         return await productModel.findByIdAndUpdate(id, info);
@@ -44,7 +46,7 @@ export const updateOneProduct = async (id, info) => {
         throw new Error(error);
     }
 }
-
+//Elimina un producto
 export const deleteOneProduct = async (id) => {
     try {
         return await productModel.findByIdAndDelete(id);

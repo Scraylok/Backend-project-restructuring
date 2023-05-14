@@ -1,7 +1,7 @@
 import { io } from "../index.js";
 import { resMessages, createMessage } from "../services/messageService.js";
 
-
+//Trae los mensajes
 export const getMessages = async (req, res) => {
     try {
         const messages = await resMessages();
@@ -15,7 +15,7 @@ export const getMessages = async (req, res) => {
         error: error.message
     })}
 }   
-
+//Se envia los mensajes del usuario
 export const sendMessage = async (req, res) => {
     const { first_name,email, message } = req.body;
     try{

@@ -1,5 +1,6 @@
 import messageModel from "../models/MongoDB/messageModel";
 
+//Creación del mensaje
 export const createMessage = async (message) => {
     try{
         const newMessage = await messageModel.create(message)
@@ -9,6 +10,7 @@ export const createMessage = async (message) => {
     }
 }
 
+//Trae los mensajes
 export const resMessages = async () => {
     try{
         return await messageModel.find()

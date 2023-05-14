@@ -1,6 +1,7 @@
 import { findUsers, createUser } from "../services/userService.js";
 import { createHash } from "../utils/bcrypt.js";
 
+//Trae a los usuarios
 export const getUsers = async (req, res) => {
     try {
         const users = await findUsers()
@@ -12,6 +13,7 @@ export const getUsers = async (req, res) => {
 
 }
 
+//Crea un usuario nuevo
 export const createNewUser = async (req, res) => {
     try {
         const user = await createUser(user)

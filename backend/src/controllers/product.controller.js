@@ -1,14 +1,14 @@
 import { findProducts, findProductById, paginateProducts, createOneProduct, updateOneProduct, deleteOneProduct } from "../services/productService.js";
 
-//Get all existing products.
+//Trae todos los productos
 export const getProducts = async (req, res) => {
     let { limit = 10, page = 1, category = undefined, stock = undefined, sort = undefined } = req.query;
     try {
-        // Checking wrong params
+    
         if (isNaN(page)) throw new Error("Parameter 'page' must be type: number")
 
-        // Pagination filter and options
-        let filter = {} // Contains category and stock filters
+        // Paginacion
+        let filter = {}
         if (category) filter.category = category
         if (stock) filter.stock = { $gt: stock - 1 }
 
@@ -18,7 +18,7 @@ export const getProducts = async (req, res) => {
             sort: sort && Object.keys(sort).length ? sort : undefined
         };
 
-        // Sorting definition, if no parameter is received, do not sort
+       
         if (sort != undefined) {
             if (sort.toLowerCase() != "asc" && sort.toLowerCase() != "desc") {
                 throw new Error("Invalid sorting parameter")
@@ -28,12 +28,12 @@ export const getProducts = async (req, res) => {
         }
         
         
-        // Perform the query with filters and sorting
+       
         const products = await paginateProducts(filter, options)
 
         if ((page > products.totalPages) || (page <= 0)) throw new Error("Parameter 'page' is out of range")
 
-        // Creating links to prev and next pages
+        // Creacion de links de anterio y siguiente
         const categoryLink = category ? `&category=${category}` : ""
         const stockLink = stock ? `&stock=${stock}` : ""
         const limitLink = limit ? `&limit=${limit}` : ""
@@ -63,7 +63,7 @@ export const getProducts = async (req, res) => {
         })
     }
 }
-//Get a single product
+//Trae son solo producto
 export const getProduct = async (req, res) => {
     try {
         const product = await findProductById(req.params.pid)
@@ -78,7 +78,7 @@ export const getProduct = async (req, res) => {
         })
     }
 }
-//Create a Product
+//Crea un producto
 export const createProduct = async (req, res) => {
     try {
         const info = req.body;
@@ -94,7 +94,7 @@ export const createProduct = async (req, res) => {
         });
     }
 }
-//Update a single product
+//Actualiza un solo producto
 export const updateProduct = async (req, res) => {
     try {
         const product = await updateOneProduct(req.params.pid, req.body)
@@ -110,7 +110,7 @@ export const updateProduct = async (req, res) => {
     }
 
 }
-//Delete a single product.
+//Elimina un producto
 export const deleteProduct = async (req, res) => {
     try {
         const product = await deleteOneProduct(req.params.pid) 

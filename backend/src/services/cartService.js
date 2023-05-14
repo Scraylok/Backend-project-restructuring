@@ -1,5 +1,6 @@
 import cartModel from "../models/MongoDB/cartModel.js";
 
+//Obtiene los prod segun el id
 export const findCartById = async (id) => {
     try {
         const cart = await cartModel.findById(id)
@@ -9,6 +10,7 @@ export const findCartById = async (id) => {
     }
 }
 
+//Creación del carrito
 export const createCart = async (cart) => {
     try {
         const newCart = await cartModel()
@@ -19,6 +21,7 @@ export const createCart = async (cart) => {
     }
 }
 
+//Eliminacion del carrito
 export const deleteCart = async (id) => {
     try {
         return await cartModel.findByIdAndDelete(id);
@@ -27,6 +30,7 @@ export const deleteCart = async (id) => {
     }
 }
 
+//Actualización del carrito
 export const updateCart = async (id, info) => {
     try {
         return await cartModel.findByIdAndUpdate(id, info);

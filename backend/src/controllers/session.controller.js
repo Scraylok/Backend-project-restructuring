@@ -3,6 +3,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import { validatePassword, createHash } from "../utils/bcrypt.js";
 
+//logeo de usuario
 export const loginUser = async (req, res, next) => {
     try {
         passport.authenticate('jwt', { session: false }, async (err, user, info) => {
@@ -51,6 +52,8 @@ export const loginUser = async (req, res, next) => {
         res.status(500).send(`Ocurrio un error en Session, ${error}`)
     }
 }
+
+//Registro del usuario
 export const registerUser = async (req, res) => {
     try {
         const { first_name, last_name, email, age, password } = req.body
@@ -71,5 +74,46 @@ export const registerUser = async (req, res) => {
     } catch (error) {
         res.status(500).send(`Ocurrio un error en Registro User, ${error}`)
     }
+
+    
+
+}
+//Inicion de secion
+export const getSession = async (req, res) => {
+    try {
+        if (req.session.login) {
+            const sessionData = {
+                name: req.session.user.first_name,
+                role: req.session.user.role
+            }
+            return sessionData
+        } else {
+            res.redirect('/login', 500, { message: "Please Login" })
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+
+//Eliminacion de la session
+export const destroySession = (req, res) => {
+    try {
+        if (req.session.login) {
+            req.session.destroy()
+            console.log(`Session closed`)
+            res.status(200).redirect('/')
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        })
+    }
+}
+//autenticaion del usuario
+export const requireAuth = (req, res, next) => {
+    console.log(req.session.login)
+    req.session.login ? next() : res.redirect('/login')
 
 }

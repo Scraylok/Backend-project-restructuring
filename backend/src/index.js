@@ -11,6 +11,7 @@ import routerProduct from "./routes/products.routes.js";
 import routerCart from "./routes/cart.routes.js";
 import routerSession from "./routes/session.routes.js";
 import routerGithub from "./routes/github.routes.js";
+import { Server } from 'socket.io'
 import nodemailer from "nodemailer"
 
 
@@ -57,7 +58,7 @@ app.use(passport.session());
 app.set("port", process.env.PORT || 8080);
 
 //Server run:
-export const server = app.listen(app.get("port"), () => {
+const server = app.listen(app.get("port"), () => {
   console.log(`Server running on Port: ${app.get("port")}`);
 });
 
